@@ -22,21 +22,49 @@ exit - Exits minesweeper.exe\n\
 reveal {row} {column} - Reveals a cell at a specific row and column\n\
 ";
 
+string instructions = "Use the reveal command to reveal a tile.";
+
 bool shouldExit = false;
 
 void renderState()
 {
     int w = state->getWidth(),
         h = state->getHeight();
-    for (int x = 0; x < w; ++x) {
+    char tileState;
+    cout << endl;
+    
+    for (int y = 0; y < w; ++y) {
         cout << endl;
-        for (int y = 0; y < h; ++y) {
-            if (!state->getTileRevealed(x, y)) {
-                cout << "*"; 
-            } else {
-                cout << +state->getTileAdjacent(x, y);
+        for (int x = 0; x < h; ++x) {
+            tileState = state->getTileState(x, y);
+            cout << " ";
+            switch (tileState) {
+                // Unrevealed
+                case -1:
+                case -2:
+                    cout << "*";
+                    break;
+                // Revealed mine
+                case 9:
+                    cout << "M";
+                    break;
+                // Revealed not mine
+                default:
+                    cout << +tileState;
             }
         }
+        cout << endl;
+    }
+    
+    switch (state->getVictoryState()) {
+        case 1:
+            cout << endl << "You won!" << endl;
+            break;
+        case -1:
+            cout << endl << "You lost..." << endl;
+            break;
+        case 0:
+            cout << endl << instructions << endl;
     }
 }
 
@@ -82,7 +110,7 @@ void revealCell(stringstream* args)
     if (state) {
         int x, y;
         *args >> x >> y;
-        state->revealTile(x, y);
+        state->revealTile(x - 1, y - 1);
         renderState();
     } else {
         cout << "You have to start a game before making a move, silly! " << endl;

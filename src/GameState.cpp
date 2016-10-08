@@ -13,11 +13,12 @@ Tile States:
 
 GameState::GameState()
 {
-    
+    lost = false;
 }
 
 GameState::GameState(int w, int h, int mines)
 {
+    lost = false;
     width = w;
     height = h;
     tiles = new char[width * height];
@@ -27,17 +28,18 @@ GameState::GameState(int w, int h, int mines)
     plantMines(mines);
 }
 
-bool GameState::getHasLost()
+int GameState::getVictoryState()
 {
-    return lost;
-}
-
-char GameState::getTileAdjacent(int x, int y)
-{
-    if (coordsInGame(x, y)) {
-        return tiles[y * width + x];
+    if (lost) {
+        return -1;
+    } else {
+        for (int i = 0, l = width * height; i < l; ++i) {
+            if (tiles[i] < 0 && tiles[i] != -2) {
+                return 0;
+            }
+        }
+        return 1;
     }
-    return 0;
 }
 
 int GameState::getWidth()
@@ -50,17 +52,17 @@ int GameState::getHeight()
     return height;
 }
 
-bool GameState::getTileRevealed(int x, int y)
+char GameState::getTileState(int x, int y)
 {
-    if (coordsInGame(x, y) && tiles[y * width + x] < 0) {
-        return false;
+    if (coordsInGame(x, y)) {
+        return tiles[y * width + x];
     }
-    return true;
+    return 0;
 }
 
 void GameState::revealTile(int x, int y)
 {
-    if (coordsInGame(x, y)) {
+    if (coordsInGame(x, y) && !lost) {
         char tile = tiles[y * width + x];
         if (tile == -2) {
             tiles[y * width + x] = 9;

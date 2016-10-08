@@ -5,9 +5,8 @@ class GameState {
     public:
         GameState();
         GameState(int w, int h, int mines);
-        bool getHasLost();
-        char getTileAdjacent(int x, int y);
-        bool getTileRevealed(int x, int y);
+        int getVictoryState();
+        char getTileState(int x, int y);
         int getWidth();
         int getHeight();
         void revealTile(int x, int y);
