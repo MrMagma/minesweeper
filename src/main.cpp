@@ -15,8 +15,6 @@ string help = "HELP\nAvailable commands are:\n\
 help - Shows information about available commands\n\
 new {width} {height} {mines} - Starts a new game and specifies the size of the \
 board and the number of mines in play\n\
-save {file name} - Saves the current game\n\
-saves - Lists all saves in the current directory\n\
 load - Loads a saved game\n\
 exit - Exits minesweeper.exe\n\
 reveal {row} {column} - Reveals a cell at a specific row and column\n\
@@ -84,16 +82,6 @@ void newGame(stringstream* args)
     renderState();
 }
 
-void saveGame(stringstream* args)
-{
-    cout << "Saving games is not implemented yet. Please come back later." << endl;
-}
-
-void listSaves(stringstream* args)
-{
-    cout << "Listing saves is useless if you can't make them in the first place!" << endl;
-}
-
 void loadGame(stringstream* args)
 {
     cout << "Loading games is not implemented yet. Please come back later." << endl;
@@ -124,8 +112,6 @@ int main(int, char**)
     view.addCommand("help", &giveHelp);
     view.addCommand("new", &newGame);
     view.addCommand("load", &loadGame);
-    view.addCommand("save", &saveGame);
-    view.addCommand("saves", &listSaves);
     view.addCommand("exit", &exitGame);
     view.addCommand("reveal", &revealCell);
     
