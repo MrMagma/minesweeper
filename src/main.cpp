@@ -24,6 +24,22 @@ reveal {row} {column} - Reveals a cell at a specific row and column\n\
 
 bool shouldExit = false;
 
+void renderState()
+{
+    int w = state->getWidth(),
+        h = state->getHeight();
+    for (int x = 0; x < w; ++x) {
+        cout << endl;
+        for (int y = 0; y < h; ++y) {
+            if (!state->getTileRevealed(x, y)) {
+                cout << "*"; 
+            } else {
+                cout << +state->getTileAdjacent(x, y);
+            }
+        }
+    }
+}
+
 void giveHelp(stringstream* args)
 {
     cout << help << endl;
@@ -37,6 +53,7 @@ void newGame(stringstream* args)
     state = new GameState(width, height, mines);
     
     cout << width << "x" << height << " game initialized with " << mines << " mines";
+    renderState();
 }
 
 void saveGame(stringstream* args)
@@ -63,7 +80,10 @@ void exitGame(stringstream* args)
 void revealCell(stringstream* args)
 {
     if (state) {
-        
+        int x, y;
+        *args >> x >> y;
+        state->revealTile(x, y);
+        renderState();
     } else {
         cout << "You have to start a game before making a move, silly! " << endl;
     }

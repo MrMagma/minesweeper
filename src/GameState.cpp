@@ -8,6 +8,7 @@ Tile States:
 0-8: Revealed; X mines adjacent
 -1: Unrevealed; no mine on tile
 -2: Unrevealed; mine on tile
+9: Revealed; mine on tile
 */
 
 GameState::GameState()
@@ -15,12 +16,15 @@ GameState::GameState()
     
 }
 
-GameState::GameState(unsigned int w, unsigned int h, unsigned int mines)
+GameState::GameState(int w, int h, int mines)
 {
     width = w;
     height = h;
     tiles = new char[width * height];
-    setUpNewGame(mines);
+    for (int i = 0, m = width * height; i < m; ++i) {
+        tiles[i] = -1;
+    }
+    plantMines(mines);
 }
 
 bool GameState::getHasLost()
@@ -28,7 +32,7 @@ bool GameState::getHasLost()
     return lost;
 }
 
-char GameState::getTileAdjacent(unsigned int x, unsigned int y)
+char GameState::getTileAdjacent(int x, int y)
 {
     if (coordsInGame(x, y)) {
         return tiles[y * width + x];
@@ -36,7 +40,17 @@ char GameState::getTileAdjacent(unsigned int x, unsigned int y)
     return 0;
 }
 
-bool GameState::getTileRevealed(unsigned int x, unsigned int y)
+int GameState::getWidth()
+{
+    return width;
+}
+
+int GameState::getHeight()
+{
+    return height;
+}
+
+bool GameState::getTileRevealed(int x, int y)
 {
     if (coordsInGame(x, y) && tiles[y * width + x] < 0) {
         return false;
@@ -44,19 +58,12 @@ bool GameState::getTileRevealed(unsigned int x, unsigned int y)
     return true;
 }
 
-void GameState::setUpNewGame(unsigned int mines)
-{
-    for (int i = 0, m = width * height; i < m; ++i) {
-        tiles[i] = -1;
-    }
-    plantMines(mines);
-}
-
-void GameState::revealTile(unsigned int x, unsigned int y)
+void GameState::revealTile(int x, int y)
 {
     if (coordsInGame(x, y)) {
         char tile = tiles[y * width + x];
         if (tile == -2) {
+            tiles[y * width + x] = 9;
             lost = true;
         } else if (tile == -1) {
             sweepFrom(x, y);
@@ -64,12 +71,12 @@ void GameState::revealTile(unsigned int x, unsigned int y)
     }
 }
 
-bool GameState::coordsInGame(unsigned int x, unsigned int y)
+bool GameState::coordsInGame(int x, int y)
 {
-    return x < width && y < height;
+    return x >= 0 && y >= 0 && x < width && y < height;
 }
 
-void GameState::plantMines(unsigned int number)
+void GameState::plantMines(int number)
 {
     int size = width * height;
     
@@ -79,12 +86,12 @@ void GameState::plantMines(unsigned int number)
     }
 }
 
-void GameState::sweepFrom(unsigned int ox, unsigned int oy)
+void GameState::sweepFrom(int ox, int oy)
 {
     char adjacentCount = 0;
     char v;
-    for (unsigned int x = ox - 1; x <= ox + 1; ++x) {
-        for (unsigned int y = oy - 1; y <= oy + 1; ++y) {
+    for (int x = ox - 1; x <= ox + 1; ++x) {
+        for (int y = oy - 1; y <= oy + 1; ++y) {
             if (!(x == ox && y == oy) && coordsInGame(x, y)) {
                 v = tiles[y * width + x];
                 if (v == -2) {
@@ -94,18 +101,17 @@ void GameState::sweepFrom(unsigned int ox, unsigned int oy)
         }
     }
     
+    tiles[oy * height + ox] = adjacentCount;
+    
     if (adjacentCount == 0) {
-        for (unsigned int x = ox - 1; x <= ox + 1; ++x) {
-            for (unsigned int y = oy - 1; y <= oy + 1; ++y) {
+        for (int x = ox - 1; x <= ox + 1; ++x) {
+            for (int y = oy - 1; y <= oy + 1; ++y) {
                 if (!(x == ox && y == oy) && coordsInGame(x, y)) {
-                    v = tiles[y * width + x];
-                    if (v == -1) {
+                    if (tiles[y * width + x] == -1) {
                         sweepFrom(x, y);
                     }
                 }
             }
         }
     }
-    
-    tiles[oy * height + ox] = adjacentCount;
 }

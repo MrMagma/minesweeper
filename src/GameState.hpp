@@ -4,20 +4,21 @@
 class GameState {
     public:
         GameState();
-        GameState(unsigned int w, unsigned int h, unsigned int mines);
+        GameState(int w, int h, int mines);
         bool getHasLost();
-        char getTileAdjacent(unsigned int x, unsigned int y);
-        bool getTileRevealed(unsigned int x, unsigned int y);
-        void revealTile(unsigned int x, unsigned int y);
-        void setUpNewGame(unsigned int mines);
+        char getTileAdjacent(int x, int y);
+        bool getTileRevealed(int x, int y);
+        int getWidth();
+        int getHeight();
+        void revealTile(int x, int y);
     private:
-        unsigned int width;
-        unsigned int height;
+        int width;
+        int height;
         char *tiles;
         bool lost;
-        bool coordsInGame(unsigned int x, unsigned int y);
-        void plantMines(unsigned int number);
-        void sweepFrom(unsigned int x, unsigned int y);
+        bool coordsInGame(int x, int y);
+        void plantMines(int number);
+        void sweepFrom(int x, int y);
 };
 
 #endif
