@@ -1,3 +1,15 @@
-obj/
-*.o
-*.exe
+*
+!*/
+
+# C/C++ files
+!*.c
+!*.h
+!*.cpp
+!*.hpp
+
+# Makefiles
+!*.mk
+!Makefile
+
+# Git-related files
+!.git*
